@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.user.User;
 
