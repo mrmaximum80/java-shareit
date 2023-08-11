@@ -5,12 +5,9 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @Data
 @RequiredArgsConstructor
@@ -19,10 +16,10 @@ public class Item {
     @PositiveOrZero
     private long id;
 
-    @NotNull
+    @NotBlank
     private String name;
 
-    @NotNull
+    @NotBlank
     private String description;
 
     @NotNull

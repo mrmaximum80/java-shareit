@@ -9,9 +9,6 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 public class Booking {
 
     @PositiveOrZero
