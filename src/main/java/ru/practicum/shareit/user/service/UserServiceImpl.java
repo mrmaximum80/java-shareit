@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.map.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,30 +23,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User createUser(UserDto user) {
         checkUserName(user);
-        return repository.createUser(user);
+        return repository.save(UserMapper.toUser(user));
     }
 
     @Override
+    @Transactional
     public User updateUser(UserDto userDto, long id) {
-        return repository.updateUser(userDto, id);
+        User user = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("{\"message\": \"Пользователь с id=" + id + " не найден\"}"));
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        return repository.save(user);
     }
 
     @Override
+    @Transactional
     public void deleteUser(long id) {
-        repository.deleteUser(id);
+        repository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public User getUserById(long id) {
-        Optional<User> user = repository.getUserById(id);
+        Optional<User> user = repository.findById(id);
         return user.orElseThrow(() -> new NotFoundException("{\"message\": \"Пользователь с id=" + id + " не найден\"}"));
     }
 
     @Override
+    @Transactional
     public List<User> getUsers() {
-        return repository.getUsers();
+        return repository.findAll();
     }
 
     private void checkUserName(UserDto user) {
