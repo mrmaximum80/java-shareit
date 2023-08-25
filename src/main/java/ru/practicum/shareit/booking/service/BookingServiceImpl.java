@@ -97,12 +97,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> getUserBookings(Long userId, String state) {
         State stateEnum = null;
-        try{
+        try {
             stateEnum = State.valueOf(state);
         } catch (IllegalArgumentException e) {
             log.info("Unknown state: {}", state);
             throw new UnknownStateException("{\"error\": \"Unknown state: " + state + "\"}");
-        };
+        }
+        ;
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
@@ -138,12 +139,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> getOwnerBookings(Long ownerId, String state) {
         State stateEnum = null;
-        try{
+        try {
             stateEnum = State.valueOf(state);
         } catch (IllegalArgumentException e) {
             log.info("Unknown state: {}", state);
             throw new UnknownStateException("{\"error\": \"Unknown state: " + state + "\"}");
-        };
+        }
+        ;
 
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + ownerId + " not found.\"}"));
@@ -161,7 +163,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case PAST:
                 bookings = allBookings.stream().filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
                 break;
             case FUTURE:
                 bookings = allBookings.stream().filter(b -> b.getStart().isAfter(LocalDateTime.now()))

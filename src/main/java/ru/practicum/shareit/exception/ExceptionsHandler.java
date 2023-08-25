@@ -36,7 +36,7 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(NotAvailableException.class)
-    public ResponseEntity<String> NotAvailableException(NotAvailableException exception) {
+    public ResponseEntity<String> notAvailableException(NotAvailableException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -44,7 +44,7 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<String> AlreadyExistException(AlreadyExistException exception) {
+    public ResponseEntity<String> alreadyExistException(AlreadyExistException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
