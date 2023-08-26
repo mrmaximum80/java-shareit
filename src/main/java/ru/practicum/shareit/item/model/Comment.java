@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -12,9 +9,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -25,25 +22,26 @@ public class Comment {
     private long id;
 
     @NotBlank
-    @NonNull
     @Column(name = "text")
     private String text;
 
-    @NotNull
-    @NonNull
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(nullable = false, name = "item_id")
     private Item item;
 
-    @NotNull
-    @NonNull
+
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(nullable = false, name = "author_id")
     private User author;
 
     @NotNull
-    @NonNull
     @Column(name = "created")
     private LocalDateTime created;
 
+    public Comment(String text, Item item, User author, LocalDateTime created) {
+        this.text = text;
+        this.item = item;
+        this.author = author;
+        this.created = created;
+    }
 }

@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -91,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
         ItemBooking nextBooking = null;
         if (item.getOwner().getId() == userId) {
             List<Booking> bookings = bookingRepository
-                    .findByItem_IdAndStatus(item.getId(), Status.APPROVED, Sort.by("start").ascending());
+                    .findByItem_IdAndStatus(itemId, Status.APPROVED, Sort.by("start").ascending());
             for (int i = 0; i < bookings.size(); i++) {
                 if (bookings.get(i).getStart().isAfter(LocalDateTime.now())) {
                     nextBooking = new ItemBooking(bookings.get(i).getId(), bookings.get(i).getBooker().getId());
@@ -137,10 +140,20 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public List<ItemDtoBooking> getItemsByUserId(long userId) {
         List<Item> items = itemRepository.findByOwner_Id(userId, Sort.by("id"));
+
+        Map<Long, Item> itemMap = items.stream().collect(Collectors.toMap(Item::getId, Function.identity()));
+
+        List<Booking> allBookings = bookingRepository
+                .findByItem_IdInAndStatus(itemMap.keySet(), Status.APPROVED, Sort.by("start").ascending());
+
         List<ItemDtoBooking> itemsWithBookings = new ArrayList<>();
+
         for (Item item : items) {
-            List<Booking> bookings = bookingRepository
-                    .findByItem_IdAndStatus(item.getId(), Status.APPROVED, Sort.by("start").ascending());
+//            List<Booking> bookings = bookingRepository
+//                    .findByItem_IdAndStatus(item.getId(), Status.APPROVED, Sort.by("start").ascending());
+            List<Booking> bookings = allBookings.stream()
+                    .filter(b -> b.getItem().getId() == item.getId())
+                    .collect(Collectors.toList());
             ItemBooking lastBooking = null;
             ItemBooking nextBooking = null;
             for (int i = 0; i < bookings.size(); i++) {

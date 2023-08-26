@@ -1,9 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -12,7 +9,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -50,4 +48,5 @@ public class Booking {
     @NonNull
     @Enumerated(EnumType.STRING)
     private Status status;
+
 }

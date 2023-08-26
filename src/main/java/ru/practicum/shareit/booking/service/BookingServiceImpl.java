@@ -96,17 +96,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getUserBookings(Long userId, String state) {
-        State stateEnum = null;
-        try {
-            stateEnum = State.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            log.info("Unknown state: {}", state);
-            throw new UnknownStateException("{\"error\": \"Unknown state: " + state + "\"}");
-        }
-        ;
+
+        State stateEnum = getState(state);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
+
         List<Booking> bookings = new ArrayList<>();
         switch (stateEnum) {
             case ALL:
@@ -138,14 +133,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getOwnerBookings(Long ownerId, String state) {
-        State stateEnum = null;
-        try {
-            stateEnum = State.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            log.info("Unknown state: {}", state);
-            throw new UnknownStateException("{\"error\": \"Unknown state: " + state + "\"}");
-        }
-        ;
+
+        State stateEnum = getState(state);
 
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + ownerId + " not found.\"}"));
@@ -186,4 +175,17 @@ public class BookingServiceImpl implements BookingService {
 
         return bookings;
     }
+
+    private State getState(String state) {
+        State stateEnum = null;
+        try {
+            stateEnum = State.valueOf(state);
+        } catch (IllegalArgumentException e) {
+            log.info("Unknown state: {}", state);
+            throw new UnknownStateException("{\"error\": \"Unknown state: " + state + "\"}");
+        }
+        ;
+        return stateEnum;
+    }
+
 }
