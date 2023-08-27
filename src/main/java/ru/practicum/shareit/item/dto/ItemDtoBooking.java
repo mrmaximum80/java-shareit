@@ -1,44 +1,43 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import ru.practicum.shareit.booking.dto.ItemBooking;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
-import javax.persistence.*;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
 @RequiredArgsConstructor
-@Entity
-@Table(name = "items")
-public class Item {
+@AllArgsConstructor
+public class ItemDtoBooking {
 
     @PositiveOrZero
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotBlank
-    @Column(name = "name")
     private String name;
 
     @NotBlank
-    @Column(name = "description")
     private String description;
 
     @NotNull
-    @Column(name = "is_available")
     private Boolean available;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
     private User owner;
+
+    private ItemBooking lastBooking;
+
+    private ItemBooking nextBooking;
+
+    private List<ItemDtoComment> comments;
 
     @Transient
     private ItemRequest request;
@@ -47,7 +46,7 @@ public class Item {
         return available;
     }
 
-    public Item(String name, String description, Boolean available, User owner) {
+    public ItemDtoBooking(String name, String description, Boolean available, User owner) {
         this.name = name;
         this.description = description;
         this.available = available;

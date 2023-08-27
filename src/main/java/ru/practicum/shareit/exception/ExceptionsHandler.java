@@ -35,8 +35,16 @@ public class ExceptionsHandler {
                 .body(exception.getMostSpecificCause().getMessage());
     }
 
+    @ExceptionHandler(NotAvailableException.class)
+    public ResponseEntity<String> notAvailableException(NotAvailableException exception) {
+        log.info(exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
     @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<String> filmExistException(AlreadyExistException exception) {
+    public ResponseEntity<String> alreadyExistException(AlreadyExistException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
