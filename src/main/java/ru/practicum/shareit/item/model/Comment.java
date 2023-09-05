@@ -10,7 +10,6 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 @Entity
 @Table(name = "comments")

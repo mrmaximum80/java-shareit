@@ -20,7 +20,7 @@ public class Booking {
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     @NonNull

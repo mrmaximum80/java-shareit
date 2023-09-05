@@ -21,7 +21,7 @@ public class BookingDto {
     private LocalDateTime end;
 
     @PositiveOrZero
-    private long itemId;
+    private Long itemId;
 
     public boolean startBeforeEnd() {
         return start.isBefore(end);

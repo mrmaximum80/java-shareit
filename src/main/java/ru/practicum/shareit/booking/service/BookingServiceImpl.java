@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
@@ -48,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
         long itemId = bookingDto.getItemId();
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" + itemId + " not found.\"}"));
+                .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" +  itemId + " not found.\"}"));
         if (!item.isAvailable()) {
             throw new NotAvailableException("{\"message\": \"Item with id=" + itemId + "is not available.\"}");
         }
@@ -95,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getUserBookings(Long userId, String state) {
+    public List<Booking> getUserBookings(Long userId, String state, Integer from, Integer size) {
 
         State stateEnum = getState(state);
 
@@ -103,28 +105,40 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
 
         List<Booking> bookings = new ArrayList<>();
+        List<Booking> allBookings = new ArrayList<>();
+
+        if (from == null && size == null) {
+            allBookings = bookingRepository.findByBooker_Id(userId, Sort.by("start").descending());
+        } else {
+            int page = from / size;
+            Pageable pageable = PageRequest.of(page, size, Sort.by("start").descending());
+            allBookings = bookingRepository.findByBooker_Id(userId, pageable);
+        }
+
         switch (stateEnum) {
             case ALL:
-                bookings = bookingRepository.findByBooker_Id(userId, Sort.by("start").descending());
+                bookings = allBookings;
                 break;
             case PAST:
-                bookings = bookingRepository
-                        .findByBooker_IdAndEndIsBefore(userId, LocalDateTime.now(), Sort.by("start").descending());
+                bookings = allBookings.stream().filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
                 break;
             case FUTURE:
-                bookings = bookingRepository
-                        .findByBooker_IdAndStartIsAfter(userId, LocalDateTime.now(), Sort.by("start").descending());
+                bookings = allBookings.stream().filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
                 break;
             case CURRENT:
-                bookings = bookingRepository
-                        .findByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
-                                LocalDateTime.now(), LocalDateTime.now(), Sort.by("start").descending());
+                bookings = allBookings.stream().filter(b -> b.getStart().isBefore(LocalDateTime.now()))
+                        .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
                 break;
             case WAITING:
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING);
+                bookings = allBookings.stream().filter(b -> b.getStatus().equals(Status.WAITING))
+                        .collect(Collectors.toList());
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.REJECTED);
+                bookings = allBookings.stream().filter(b -> b.getStatus().equals(Status.REJECTED))
+                        .collect(Collectors.toList());
                 break;
         }
 
@@ -132,14 +146,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getOwnerBookings(Long ownerId, String state) {
+    public List<Booking> getOwnerBookings(Long ownerId, String state, Integer from, Integer size) {
 
         State stateEnum = getState(state);
 
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + ownerId + " not found.\"}"));
 
-        List<Booking> allBookings = bookingRepository.findOwnerBookings(ownerId);
+        List<Booking> allBookings;
+        if (from == null && size == null) {
+            allBookings = bookingRepository.findOwnerBookings(ownerId);
+        } else {
+            allBookings = bookingRepository.findOwnerBookings(ownerId)
+                    .stream().skip(from).limit(size).collect(Collectors.toList());
+        }
+
         if (allBookings.isEmpty()) {
             throw new NotFoundException("{\"message\": \"User with id=" + ownerId + " has no any item\"}");
         }
