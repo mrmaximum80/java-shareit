@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.NotAvailableException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UnknownStateException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -99,6 +100,18 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void addBookingTestOwner() {
+        final NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        booking = bookingService.addBooking(owner.getId(), bookingDto);
+                    }
+                });
+    }
+
+    @Test
     void approveBookingTest() {
         booking = bookingService.addBooking(booker.getId(), bookingDto);
         assertNotNull(booking.getId());
@@ -108,6 +121,49 @@ class BookingServiceImplTest {
 
         booking = bookingService.approveBooking(owner.getId(), booking.getId(), "true");
         assertEquals(booking.getStatus(), Status.APPROVED);
+    }
+
+    @Test
+    void approveBookingNotWaiting() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+        booking = bookingService.approveBooking(owner.getId(), booking.getId(), "true");
+
+        final NotAvailableException exception = assertThrows(
+                NotAvailableException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        booking = bookingService.approveBooking(owner.getId(), booking.getId(), "true");
+                    }
+                });
+    }
+
+    @Test
+    void approveBookingNotOwner() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+
+        final NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        booking = bookingService.approveBooking(100L, booking.getId(), "true");
+                    }
+                });
+    }
+
+    @Test
+    void approveBookingBadApprove() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+
+        final NotAvailableException exception = assertThrows(
+                NotAvailableException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        booking = bookingService.approveBooking(owner.getId(), booking.getId(), "tru");
+                    }
+                });
     }
 
     @Test
@@ -122,10 +178,38 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void getBookingTestWrongUser() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+
+        final NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                new Executable() {
+                    @Override
+                    public void execute() {
+                        booking = bookingService.getBooking(100L, booking.getId());
+                    }
+                });
+
+    }
+
+    @Test
     void getUserBookingsTestAll() {
         booking = bookingService.addBooking(booker.getId(), bookingDto);
 
         List<Booking> bookings = bookingService.getUserBookings(booker.getId(), "ALL", 0, 20);
+
+        assertEquals(bookings.size(), 1);
+        assertNotNull(bookings.get(0).getId());
+        assertNotNull(bookings.get(0).getStart());
+        assertNotNull(bookings.get(0).getEnd());
+        assertEquals(Status.WAITING, bookings.get(0).getStatus());
+    }
+
+    @Test
+    void getUserBookingsTestAllNullebleFromAndSize() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+
+        List<Booking> bookings = bookingService.getUserBookings(booker.getId(), "ALL", null, null);
 
         assertEquals(bookings.size(), 1);
         assertNotNull(bookings.get(0).getId());
@@ -199,6 +283,19 @@ class BookingServiceImplTest {
         booking = bookingService.addBooking(booker.getId(), bookingDto);
 
         List<Booking> bookings = bookingService.getOwnerBookings(owner.getId(), "ALL", 0, 20);
+
+        assertEquals(bookings.size(), 1);
+        assertNotNull(bookings.get(0).getId());
+        assertNotNull(bookings.get(0).getStart());
+        assertNotNull(bookings.get(0).getEnd());
+        assertEquals(Status.WAITING, bookings.get(0).getStatus());
+    }
+
+    @Test
+    void getOwnerBookingsTestAllNullebleFromAndSize() {
+        booking = bookingService.addBooking(booker.getId(), bookingDto);
+
+        List<Booking> bookings = bookingService.getOwnerBookings(owner.getId(), "ALL", null, null);
 
         assertEquals(bookings.size(), 1);
         assertNotNull(bookings.get(0).getId());
