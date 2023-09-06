@@ -77,7 +77,7 @@ public class ItemRequestServiceImplTest {
     @Test
     void getAllRequestsTestNullebleFromAndSize() {
         ItemRequest itemRequest = itemRequestService.addRequest(requestor.getId(), itemRequestDto);
-        List<ItemRequestDtoItems> itemRequests = itemRequestService.getAllRequests(100L, null, null );
+        List<ItemRequestDtoItems> itemRequests = itemRequestService.getAllRequests(100L, null, null);
 
         assertEquals(1, itemRequests.size());
         assertNotNull(itemRequests.get(0).getId());
