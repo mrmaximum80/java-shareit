@@ -67,7 +67,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         for (ItemRequest itemRequest : itemRequests) {
             List<ItemDto> itemDtoList = requestedItems.stream()
-                    .filter(item -> item.getRequest().getId() == itemRequest.getId())
+                    .filter(item -> item.getRequest().getId().equals(itemRequest.getId()))
                     .map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());
             ItemRequestDtoItems itemRequestDtoItems = new ItemRequestDtoItems(
@@ -106,7 +106,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         for (ItemRequest itemRequest : itemRequestPage) {
             List<ItemDto> itemDtoList = requestedItems.stream()
-                    .filter(item -> item.getRequest().getId() == itemRequest.getId())
+                    .filter(item -> item.getRequest().getId().equals(itemRequest.getId()))
                     .map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());
             ItemRequestDtoItems itemRequestDtoItems = new ItemRequestDtoItems(

@@ -166,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
 
         for (Item item : items) {
             List<Booking> bookings = allBookings.stream()
-                    .filter(b -> b.getItem().getId() == item.getId())
+                    .filter(b -> b.getItem().getId().equals(item.getId()))
                     .collect(Collectors.toList());
             ItemBooking lastBooking = null;
             ItemBooking nextBooking = null;
