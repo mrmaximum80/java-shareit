@@ -86,9 +86,9 @@ class ItemServiceImplTest {
 
         BookingDto futureBookingDto = new BookingDto(LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2), itemId);
-        Booking futereBooking = bookingService.addBooking(bookerId, futureBookingDto);
-        long FutureBookingId = futereBooking.getId();
-        futereBooking = bookingService.approveBooking(userId, FutureBookingId, "true");
+        Booking futureBooking = bookingService.addBooking(bookerId, futureBookingDto);
+        long futureBookingId = futureBooking.getId();
+        futureBooking = bookingService.approveBooking(userId, futureBookingId, "true");
 
         CommentDto commentDto = new CommentDto("Comment");
         ItemDtoComment comment = itemService.addComment(bookerId, itemId, commentDto);

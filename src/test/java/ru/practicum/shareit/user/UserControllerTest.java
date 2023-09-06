@@ -82,10 +82,10 @@ class UserControllerTest {
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         UserService userService = new UserServiceImpl(userRepository);
 
-        userService.deleteUser(1l);
+        userService.deleteUser(1L);
 
         Mockito.verify(userRepository, Mockito.times(1))
-                .deleteById(1l);
+                .deleteById(1L);
 
         mvc.perform(delete("/users/1")
                         .characterEncoding(StandardCharsets.UTF_8)

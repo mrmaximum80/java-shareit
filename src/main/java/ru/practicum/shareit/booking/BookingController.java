@@ -24,20 +24,20 @@ public class BookingController {
 
     @PostMapping
     public Booking addBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                        @Valid @RequestBody BookingDto bookingDto) {
+                              @Valid @RequestBody BookingDto bookingDto) {
         return bookingService.addBooking(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
     public Booking approveBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                         @PathVariable long bookingId,
-                         @RequestParam(name = "approved") String approved) {
+                                  @PathVariable long bookingId,
+                                  @RequestParam(name = "approved") String approved) {
         return bookingService.approveBooking(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
     public Booking getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                            @PathVariable long bookingId) {
+                                  @PathVariable long bookingId) {
         return bookingService.getBooking(userId, bookingId);
     }
 
@@ -45,7 +45,7 @@ public class BookingController {
     public List<Booking> getUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                          @RequestParam(name = "state", defaultValue = "ALL") String state,
                                          @RequestParam(name = "from", required = false) @Min(0) Integer from,
-                                         @RequestParam(name = "size", required = false) @Min(1) Integer size){
+                                         @RequestParam(name = "size", required = false) @Min(1) Integer size) {
         return bookingService.getUserBookings(userId, state, from, size);
     }
 
@@ -53,7 +53,7 @@ public class BookingController {
     public List<Booking> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                           @RequestParam(name = "state", defaultValue = "ALL") String state,
                                           @RequestParam(name = "from", required = false) @Min(0) Integer from,
-                                          @RequestParam(name = "size", required = false) @Min(1) Integer size ) {
+                                          @RequestParam(name = "size", required = false) @Min(1) Integer size) {
         return bookingService.getOwnerBookings(ownerId, state, from, size);
     }
 
