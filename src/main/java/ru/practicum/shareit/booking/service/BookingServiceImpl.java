@@ -50,11 +50,11 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
         long itemId = bookingDto.getItemId();
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" +  itemId + " not found.\"}"));
+                .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" + itemId + " not found.\"}"));
         if (!item.isAvailable()) {
             throw new NotAvailableException("{\"message\": \"Item with id=" + itemId + "is not available.\"}");
         }
-        if (userId == item.getOwner().getId()) {
+        if (userId.equals(item.getOwner().getId())) {
             throw new NotFoundException("{\"message\": \"Owner of item can not create booking.\"}");
         }
 

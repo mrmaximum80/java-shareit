@@ -35,9 +35,9 @@ class ItemServiceImplTest {
 
     private UserDto userDto;
     private User user;
-    private long userId;
+    private Long userId;
     private ItemDto itemDto;
-    private long itemId;
+    private Long itemId;
 
     @BeforeEach
     void before() {

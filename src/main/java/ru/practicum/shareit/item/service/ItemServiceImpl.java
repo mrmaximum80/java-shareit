@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" + itemId + " not found.\"}"));
-        if (item.getOwner().getId() != userId) {
+        if (!item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("{\"message\": \"Item with id=" + itemId
                     + " does not belong to user with id=" + userId + ".\"}");
         }
