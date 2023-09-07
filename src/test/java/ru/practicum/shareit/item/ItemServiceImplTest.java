@@ -33,11 +33,11 @@ class ItemServiceImplTest {
     private final UserService userService;
     private final BookingService bookingService;
 
-    UserDto userDto;
-    User user;
-    long userId;
-    ItemDto itemDto;
-    long itemId;
+    private UserDto userDto;
+    private User user;
+    private long userId;
+    private ItemDto itemDto;
+    private long itemId;
 
     @BeforeEach
     void before() {

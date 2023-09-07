@@ -28,10 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
 
     @Autowired
     private MockMvc mvc;
@@ -40,7 +40,7 @@ class UserControllerTest {
     void createUser() throws Exception {
         UserDto userDto = new UserDto("user", "user@mail");
         User user = new User("user", "user@mail");
-        user.setId(1);
+        user.setId(1L);
 
         Mockito.when(userService.createUser(userDto))
                 .thenReturn(user);
@@ -60,7 +60,7 @@ class UserControllerTest {
     void updateUser() throws Exception {
         UserDto userDto = new UserDto("user", "user@mail");
         User user = new User("user", "user@mail");
-        user.setId(1);
+        user.setId(1L);
 
         Mockito.when(userService.updateUser(userDto, 1))
                 .thenReturn(user);
@@ -97,9 +97,9 @@ class UserControllerTest {
     @Test
     void getUsers() throws Exception {
         User user1 = new User("user1", "user1@mail");
-        user1.setId(1);
+        user1.setId(1L);
         User user2 = new User("user2", "user2@mail");
-        user2.setId(2);
+        user2.setId(2L);
         List<User> users = new ArrayList<>();
         users.add(user1);
         users.add(user2);
@@ -122,7 +122,7 @@ class UserControllerTest {
     @Test
     void getUserById() throws Exception {
         User user1 = new User("user1", "user1@mail");
-        user1.setId(1);
+        user1.setId(1L);
 
         Mockito.when(userService.getUserById(1))
                 .thenReturn(user1);

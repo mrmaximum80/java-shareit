@@ -30,13 +30,12 @@ public class ItemRequestServiceImplTest {
     private final BookingService bookingService;
     private final ItemRequestService itemRequestService;
 
-    User requestor;
-    UserDto userDto;
-    ItemRequestDto itemRequestDto;
+    private User requestor;
+    private ItemRequestDto itemRequestDto;
 
     @BeforeEach
     void beforeEach() {
-        userDto = new UserDto("requestor", "owner@mail");
+        UserDto userDto = new UserDto("requestor", "owner@mail");
         requestor = userService.createUser(userDto);
         itemRequestDto = new ItemRequestDto("Request description");
     }

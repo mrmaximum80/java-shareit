@@ -34,13 +34,13 @@ class BookingServiceImplTest {
     private final BookingService bookingService;
 
 
-    Item item;
-    ItemDto itemDto;
-    User owner;
-    User booker;
-    UserDto userDto;
-    Booking booking;
-    BookingDto bookingDto;
+    private Item item;
+    private ItemDto itemDto;
+    private User owner;
+    private User booker;
+    private UserDto userDto;
+    private Booking booking;
+    private BookingDto bookingDto;
 
     @BeforeEach
     void beforeEach() {

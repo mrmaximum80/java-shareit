@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Data
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
