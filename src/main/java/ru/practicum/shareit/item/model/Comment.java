@@ -10,7 +10,6 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 @Entity
 @Table(name = "comments")
@@ -19,7 +18,7 @@ public class Comment {
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @Column(name = "text")

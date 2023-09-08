@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface ItemService {
 
-    Item addNewItem(Long userId, ItemDto itemDto);
+    ItemDto addNewItem(Long userId, ItemDto itemDto);
 
-    Item editItem(Long userId, ItemDto itemDto, long itemId);
+    ItemDto editItem(Long userId, ItemDto itemDto, long itemId);
 
     ItemDtoBooking getItem(long itemId, long userId);
 
@@ -20,5 +20,5 @@ public interface ItemService {
 
     List<Item> findItems(String text);
 
-    ItemDtoComment addComment(Long userId, long itemId, CommentDto commentDto);
+    ItemDtoComment addComment(Long userId, Long itemId, CommentDto commentDto);
 }

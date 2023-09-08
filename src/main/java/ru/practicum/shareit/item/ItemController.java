@@ -24,13 +24,13 @@ public class ItemController {
     }
 
     @PostMapping
-    public Item addItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                     @Valid @RequestBody ItemDto itemDto) {
         return itemService.addNewItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public Item editItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto editItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                     @RequestBody ItemDto itemDto, @PathVariable long itemId) {
         return itemService.editItem(userId, itemDto, itemId);
     }
@@ -53,7 +53,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ItemDtoComment addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @PathVariable long itemId,
+                                     @PathVariable Long itemId,
                                      @Valid @RequestBody CommentDto commentDto) {
         return itemService.addComment(userId, itemId, commentDto);
     }

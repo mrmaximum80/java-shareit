@@ -10,8 +10,8 @@ import javax.validation.constraints.PositiveOrZero;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -19,7 +19,7 @@ public class User {
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @NonNull
@@ -29,7 +29,7 @@ public class User {
     @Email
     @NotBlank
     @NonNull
-    @Column(name = "email")
+    @Column(unique = true, name = "email")
     private String email;
 
 }

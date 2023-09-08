@@ -30,40 +30,24 @@ public class ExceptionsHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> parseException(HttpMessageNotReadableException exception) {
         log.info(exception.getMostSpecificCause().getMessage());
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMostSpecificCause().getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMostSpecificCause().getMessage());
     }
 
     @ExceptionHandler(NotAvailableException.class)
     public ResponseEntity<String> notAvailableException(NotAvailableException exception) {
         log.info(exception.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<String> alreadyExistException(AlreadyExistException exception) {
-        log.info(exception.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> notFoundException(NotFoundException exception) {
         log.info(exception.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<String> anyException(Throwable exception) {
         log.info(exception.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 }

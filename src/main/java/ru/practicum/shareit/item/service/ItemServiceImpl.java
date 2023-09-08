@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.ItemBooking;
@@ -19,15 +20,13 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,37 +38,52 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository,
                            UserRepository userRepository,
                            BookingRepository bookingRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
     @Transactional
-    public Item addNewItem(Long userId, ItemDto itemDto) {
-        if (userRepository.findById(userId).isPresent()) {
-            Item item = ItemMapper.toItem(userRepository.findById(userId).get(), itemDto);
-            return itemRepository.save(item);
+    public ItemDto addNewItem(Long userId, ItemDto itemDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
+        Item item;
+        Optional<ItemRequest> optRequest;
+        if (itemDto.getRequestId() != null) {
+            optRequest = itemRequestRepository.findById(itemDto.getRequestId());
+            if (optRequest.isPresent()) {
+                item = ItemMapper.toItem(user, itemDto, optRequest.get());
+            } else {
+                item = ItemMapper.toItem(user, itemDto, null);
+            }
         } else {
-            throw new NotFoundException("User with id=" + userId + " not found!");
+            item = ItemMapper.toItem(user, itemDto, null);
         }
+
+        item = itemRepository.save(item);
+        itemDto.setId(item.getId());
+        return itemDto;
     }
 
     @Override
     @Transactional
-    public Item editItem(Long userId, ItemDto itemDto, long itemId) {
+    public ItemDto editItem(Long userId, ItemDto itemDto, long itemId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"User with id=" + userId + " not found.\"}"));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("{\"message\": \"Item with id=" + itemId + " not found.\"}"));
-        if (item.getOwner().getId() != userId) {
+        if (!item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("{\"message\": \"Item with id=" + itemId
                     + " does not belong to user with id=" + userId + ".\"}");
         }
@@ -82,7 +96,9 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return itemRepository.save(item);
+        itemRepository.save(item);
+        itemDto = ItemMapper.toItemDto(item);
+        return itemDto;
     }
 
     @Override
@@ -149,10 +165,8 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDtoBooking> itemsWithBookings = new ArrayList<>();
 
         for (Item item : items) {
-//            List<Booking> bookings = bookingRepository
-//                    .findByItem_IdAndStatus(item.getId(), Status.APPROVED, Sort.by("start").ascending());
             List<Booking> bookings = allBookings.stream()
-                    .filter(b -> b.getItem().getId() == item.getId())
+                    .filter(b -> b.getItem().getId().equals(item.getId()))
                     .collect(Collectors.toList());
             ItemBooking lastBooking = null;
             ItemBooking nextBooking = null;
@@ -205,7 +219,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDtoComment addComment(Long userId, long itemId, CommentDto commentDto) {
+    public ItemDtoComment addComment(Long userId, Long itemId, CommentDto commentDto) {
         List<Booking> bookings = bookingRepository
                 .findByBooker_IdAndItem_IdAndEndIsBefore(userId, itemId, LocalDateTime.now());
         if (bookings == null || bookings.isEmpty()) {
