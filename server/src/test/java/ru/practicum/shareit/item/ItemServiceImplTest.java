@@ -129,9 +129,6 @@ class ItemServiceImplTest {
 
         assertEquals(items.size(), 1);
         assertEquals(items.get(0).getName(), "Item name");
-
-        items = itemService.findItems(" ");
-        assertEquals(items.size(), 0);
     }
 
     @Test

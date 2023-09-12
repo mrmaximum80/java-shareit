@@ -26,7 +26,10 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -211,10 +214,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<Item> findItems(String text) {
-        if (!text.isBlank()) {
-            return itemRepository.search(text.toUpperCase());
-        }
-        return Collections.emptyList();
+        return itemRepository.search(text.toUpperCase());
     }
 
     @Override

@@ -2,12 +2,14 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @Slf4j
 @RestController
@@ -46,6 +48,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> findItems(@RequestParam(name = "text") String text) {
+        if (text.isBlank()) {
+            return new ResponseEntity<Object>(Collections.emptyList(), HttpStatus.OK);
+        }
         return itemClient.findItems(text);
     }
 
